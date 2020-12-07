@@ -1,34 +1,39 @@
 import re
+import json
 from lxml import etree
 from tqdm import tqdm
-from itertools import compress
 
-LINK = '(http|https)://[a-zA-Z0-9\./=#_%~&\-\?:]+'
+LINK = '(http|https)://[가-힣a-zA-Z0-9\./=#_%~&\-\?:;\(\)]+'
 SENTENCE = '(?<=[가-힣ㄱ-ㅎa-z])(\.|\?|!) ?(?=[가-힣ㄱ-ㅎA-Z])'
 DELI_SEN = '?!.'
 
 
-def load_kowiki(path):
+def kowiki_sentences(path, mode='kowiki-sens-kor'):
     contents = []
     c_append = contents.append
     for _, e in tqdm(etree.iterparse(path)):
         etag = e.tag.split('}')[-1]
         if etag == 'text':
-            c_append(preprocessing(e.text))
+            c_append(preprocessing(e.text, mode=mode))
         e.clear()
     return contents
 
 
-def rm_embedded_string(text, former, later):
-    text = re.sub(f'(?<={former})[^{later}]+(?={later})', '', text)
-    text = re.sub(f'[{former}{later}]', '', text)
-    return text
+def korquad2_sentences(path, mode='korquad2-sens-kor'):
+    with open(path, 'r', encoding='utf-8') as r:
+        contents = json.load(r)
+    outputs = []
+    append = outputs.append
+    for i,content in enumerate(contents['data']):
+        refined = preprocessing(content['context'], mode=mode)
+        append(refined)
+    return outputs
 
 
-def preprocessing(content, mode='korquad2-sens-kor'):
+def preprocessing(content, mode='kowiki-sens-kor'):
     if not isinstance(content, str):
         return content
-    if mode == 'korquad2-sens-kor':
+    if mode == 'kowiki-sens-kor':
         content = remove_with_inside(content, '<', '>')
         content = remove_with_inside(content, '{{', '}}')
         content = remove_with_inside(content, '{', '}')
@@ -53,18 +58,32 @@ def preprocessing(content, mode='korquad2-sens-kor'):
         content = re.sub('(?<=[ 가-힣])[\[\]](?=[ 가-힣])','',content)
         content = re.sub('\n{2,}','\n\n', content)
 
+    elif mode == 'korquad2-sens-kor':
+        content = remove_with_inside(content, '<', '>', padding='')
+        content = re.sub(LINK, '', content)
+        content = re.sub('\[편집\]', '', content)
+        content = re.sub('(?<=\n)[↑\-]', '', content)
+        content = re.sub('(?<=\n)분류:.+(?=\n)', '', content)
+        content = re.sub('(?<=[ 가-힣])[\[\]](?=[ 가-힣])', '', content)
+        sentences = []
+        for c in content.split('\n'):
+            if (len(c.split()) > 3 and re.compile('[가-힣]').match(c)) or (c==''):
+                sentences.append(c)
+        content = '\n'.join(sentences)
+        content = get_sentences(content)
+        content = '\n'.join(content)
+        content = re.sub('(?<=[ 가-힣])[\[\]](?=\n)', '', content)
+        content = re.sub('\n{2,}', '\n\n', content)
+        content = re.sub('\[[0-9]+\](?=\n)', '', content)
     return content
 
 
-def remove_with_inside(content, former, later):
+def remove_with_inside(content, former, later, padding=''):
     pattern_a = f'{former}[^{former}{later}]+{later}'
     pattern_b = f'{former}[^{later}]+{later}'
-    content = re.sub(pattern_a, '', content)
-    content = re.sub(pattern_b, '', content)
+    content = re.sub(pattern_a, padding, content)
+    content = re.sub(pattern_b, padding, content)
     return content
-
-def if_matching_hangul(match):
-    return None if match.group('not_hangul') else None
 
 
 def get_sentences(content):
@@ -74,9 +93,3 @@ def get_sentences(content):
 def save_sentences(path, contents):
     with open(path, 'w', encoding='utf-8') as w:
         w.write(contents)
-
-
-if __name__ == '__main__':
-    contents = load_kowiki('../data/kowiki-20200401-pages-meta-current.xml')
-    contents = '\n\n'.join(list(compress(contents, contents)))
-    save_sentences('../outputs/refined.txt', contents)
