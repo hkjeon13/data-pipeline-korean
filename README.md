@@ -16,7 +16,7 @@ extract_sentences.py --input_dir <input file directory> --output_dir <output fil
 - **output_dir**: 출력 파일의 폴더 경로를 설정합니다.
 - **prefix**: 출력 파일의 이름 앞에 추가될 접두사를 설정합니다.
 - **data_type**: 입력 데이터의 유형을 설정합니다(현재 지원되는 유형: 'korquad1-sens-kor', 'korquad2-sens-kor', 'kowiki-sens-kor', 'namuwiki-sens-kor').
-- **num_cores**: multiprocessing에서 이용할 cpu코어의 개수를 설정합니다.
+- **num_cores**: multiprocessing에서 이용할 cpu코어의 개수를 설정합니다(default: 사용가능한 모든 cpu 코어).
 
 
 ## 기타 및 유의사항
