@@ -8,7 +8,7 @@
 - 구현 기능: 문장 추출, 원본 데이터 추출(예정), 각 과제에 맞는 데이터셋 구축(예정)
 
 ## 실행방법
-extract_sentences.py: 데이터에서 한국어 문장을 추출하는 코드.
+*extract_sentences.py: 데이터에서 한국어 문장을 추출하는 코드.*
 ```
 extract_sentences.py --input_dir <input file directory> --output_dir <output file directory> --prefix sentences_ --data_type kowiki-sens-kor --num_cores 16
 ``` 
