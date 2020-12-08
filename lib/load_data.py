@@ -84,50 +84,51 @@ def preprocessing(content, mode='kowiki-sens-kor'):
     if not isinstance(content, str):
         return content
     if mode == 'kowiki-sens-kor':
-        content = remove_with_inside(content, '<', '>')
-        content = remove_with_inside(content, '{{', '}}')
-        content = remove_with_inside(content, '{', '}')
+        pairs = [['<', '>'], ['{{', '}}'], ['{', '}']]
+        for f, l in pairs:
+            content = remove_with_inside(content, f, l)
         content = re.sub('{}', '', content)
-        content = re.sub('(?<=\n)[ :;#\*\-]+', '', content)
-        content = re.sub('(?<=\[\[)[^\[]+\|(?=[^\|\]]+\]\])', '', content)
-        content = re.sub('[\[\]]{2,}', '', content)
-        content = re.sub("\'{2,}", '\'', content)
-        content = re.sub("\"{2,}", '\"', content)
-        content = re.sub("={2,}", '', content)
-        content = re.sub(LINK, '', content)
-        content = re.sub('\[\]','', content)
-        content = re.sub('(?<=\n)\'+', '', content)
-        content = re.sub('(?<=\n)/+', '', content)
-        content = re.sub('(?<=\n) +', '', content)
-        content = re.sub('\(, \)', '', content)
+
+        replace_char = [["\'{2,}", "\'"], ['\"{2,}', '\"']]
+        for key, value in replace_char:
+            content = re.sub(key, value, content)
+
+        rm_patterns = ['(?<=\n)[ :;#\*\-]+',
+                       '(?<=\[\[)[^\[]+\|(?=[^\|\]]+\]\])',
+                       '[\[\]]{2,}', "={2,}", LINK, '\[\]',
+                       '(?<=\n)\'+', '(?<=\n)/+', '(?<=\n) +', '\(, \)']
+        for pattern in rm_patterns:
+            content = re.sub(pattern, '', content)
+
         content = '\n'.join(list(filter(
             lambda x: len(x.split()) > 3 and re.compile('[가-힣]').match(x),
             get_sentences(content))))
-        content = re.sub('(?<=\n)[^가-힣]+(?=\n)', '', content)
-        content = re.sub('(?<=\n)\[.+\](?=\n)', '', content)
-        content = re.sub('(?<=[ 가-힣])[\[\]](?=[ 가-힣])','',content)
+
+        rm_patterns = ['(?<=\n)[^가-힣]+(?=\n)', '(?<=\n)\[.+\](?=\n)', '(?<=[ 가-힣])[\[\]](?=[ 가-힣])']
+        for pattern in rm_patterns:
+            content = re.sub(pattern, '', content)
+
         content = re.sub('\n{2,}','\n\n', content)
 
     elif mode == 'namuwiki-sens-kor':
-        content = remove_with_inside(content, '<', '>')
-        content = remove_with_inside(content, '{{', '}}')
-        content = remove_with_inside(content, '{', '}')
-        content = remove_with_inside(content, '~~', '~~')
+        pairs =[['<', '>'],['{{', '}}'],['{', '}'],['~~', '~~']]
+        for f,l in pairs:
+            content = remove_with_inside(content,f, l)
         content = re.sub('{}', '', content)
-        content = re.sub('(?<=\n)[ :;#\*\-]+', '', content)
-        content = re.sub('(?<=\[\[)[^\[]+\|(?=[^\|\]]+\]\])', '', content)
-        content = re.sub('[\[\]]{2,}', '', content)
-        content = re.sub("\'{2,}", '\'', content)
-        content = re.sub("\"{2,}", '\"', content)
-        content = re.sub("={2,}", '', content)
-        content = re.sub(LINK, '', content)
-        content = re.sub('\[\]', '', content)
-        content = re.sub('(?<=\n)[\'/ ▲>]+', '', content)
-        content = re.sub('\(, \)', '', content)
-        content = re.sub('(?<=\n)[^가-힣]+(?=\n)', '', content)
-        content = re.sub('(?<=\n)\[.+\](?=\n)', '', content)
-        content = re.sub('(?<=\n)\|.+\|(?=\n)', '', content)
-        content = re.sub('\[\*.+\]', '', content)
+
+        replace_char = [["\'{2,}", "\'"], ['\"{2,}', '\"']]
+        for key, value in replace_char:
+            content = re.sub(key, value, content)
+
+        rm_patterns = ['(?<=\n)[ :;#\*\-]+',
+                       '(?<=\[\[)[^\[]+\|(?=[^\|\]]+\]\])',
+                       '[\[\]]{2,}', '={2,}', LINK, '\[\]',
+                       '(?<=\n)[\'/ ▲>]+', '\(, \)',
+                       '(?<=\n)[^가-힣]+(?=\n)', '(?<=\n)\[.+\](?=\n)',
+                       '(?<=\n)\|.+\|(?=\n)', '\[\*.+\]']
+        for pattern in rm_patterns:
+            content = re.sub(pattern, '', content)
+
         sentences = []
         for c in content.split('\n'):
             if (len(c.split()) > 3 and re.compile('[가-힣]').match(c)) or (c == ''):
@@ -142,21 +143,21 @@ def preprocessing(content, mode='kowiki-sens-kor'):
 
     elif mode =='korquad2-sens-kor':
         content = remove_with_inside(content, '<', '>', padding='')
-        content = re.sub(LINK, '', content)
-        content = re.sub('\[편집\]', '', content)
-        content = re.sub('(?<=\n)[↑\-]', '', content)
-        content = re.sub('(?<=\n)분류:.+(?=\n)', '', content)
-        content = re.sub('(?<=[ 가-힣])[\[\]](?=[ 가-힣])', '', content)
+
+        rm_patterns = [LINK,'\[편집\]', '(?<=\n)[↑\-]', '(?<=\n)분류:.+(?=\n)', '(?<=[ 가-힣])[\[\]](?=[ 가-힣])']
+        for pattern in rm_patterns:
+            content = re.sub(pattern, '', content)
+
         sentences = []
         for c in content.split('\n'):
             if (len(c.split()) > 3 and re.compile('[가-힣]').match(c)) or (c==''):
                 sentences.append(c)
         content = '\n'.join(sentences)
-        content = get_sentences(content)
-        content = '\n'.join(content)
-        content = re.sub('(?<=[ 가-힣])[\[\]](?=\n)', '', content)
+        content = '\n'.join(get_sentences(content))
+        rm_patterns = ['(?<=[ 가-힣])[\[\]](?=\n)', '\[[0-9]+\](?=\n)']
+        for pattern in rm_patterns:
+            content = re.sub(pattern, '', content)
         content = re.sub('\n{2,}', '\n\n', content)
-        content = re.sub('\[[0-9]+\](?=\n)', '', content)
     else:
         raise KeyError('해당 키에 대한 방법이 정의되어 있지 않습니다.')
     return content
