@@ -170,9 +170,3 @@ def remove_with_inside(content, former, later, padding=''):
 
 def get_sentences(content):
     return re.split('(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|!)\s', content)
-
-
-if __name__=='__main__':
-    sentences = namuwiki_sentences('../data/namu_wiki/docData200302.json', 1)
-    #print(len([sen for sen in sentences if not sen]))
-
