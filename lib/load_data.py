@@ -112,6 +112,7 @@ def preprocessing(content, mode='kowiki-sens-kor'):
         content = remove_with_inside(content, '<', '>')
         content = remove_with_inside(content, '{{', '}}')
         content = remove_with_inside(content, '{', '}')
+        content = remove_with_inside(content, '~~', '~~')
         content = re.sub('{}', '', content)
         content = re.sub('(?<=\n)[ :;#\*\-]+', '', content)
         content = re.sub('(?<=\[\[)[^\[]+\|(?=[^\|\]]+\]\])', '', content)
@@ -133,6 +134,7 @@ def preprocessing(content, mode='kowiki-sens-kor'):
                 sentences+=get_sentences(c)
         content = '\n'.join(sentences)
         content = re.sub('\n{2,}', '\n\n', content)
+        content = re.sub('(?<=\n)파일:[^\n]+', '', content)
 
     elif mode == 'korquad1-sens-kor':
         content = get_sentences(content)
