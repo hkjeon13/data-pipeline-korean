@@ -12,11 +12,11 @@
 ```
 extract_sentences.py --input_dir <input file directory> --output_dir <output file directory> --prefix sentences_ --data_type kowiki-sens-kor --num_cores 16
 ``` 
-- input_dir: 입력 파일의 폴더 경로를 설정합니다.
-- output_dir: 출력 파일의 폴더 경로를 설정합니다.
-- prefix: 출력 파일의 이름 앞에 추가될 접두사를 설정합니다.
-- data_type: 입력 데이터의 유형을 설정합니다(현재 지원되는 유형: 'korquad1-sens-kor', 'korquad2-sens-kor', 'kowiki-sens-kor', 'namuwiki-sens-kor').
-- num_cores: multiprocessing에서 이용할 cpu코어의 개수를 설정합니다.
+- **input_dir**: 입력 파일의 폴더 경로를 설정합니다.
+- **output_dir**: 출력 파일의 폴더 경로를 설정합니다.
+- **prefix**: 출력 파일의 이름 앞에 추가될 접두사를 설정합니다.
+- **data_type**: 입력 데이터의 유형을 설정합니다(현재 지원되는 유형: 'korquad1-sens-kor', 'korquad2-sens-kor', 'kowiki-sens-kor', 'namuwiki-sens-kor').
+- **num_cores**: multiprocessing에서 이용할 cpu코어의 개수를 설정합니다.
 
 
 ## 기타 및 유의사항
