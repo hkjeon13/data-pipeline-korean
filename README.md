@@ -4,5 +4,5 @@
 ## 구현 방법 및 범위
 해당 repository는 한국어 위키 백과(kowiki), 나무 위키(namu wiki), KorQuAD 1.0, KorQuAD 2.1 데이터셋을 파싱(parsing)하고 목적에 맞게 다듬기 위한 코드를 제공하고 있습니다.
 
-적용가능 데이터: 한국어 위키 백과(kowiki), 나무 위키(namu wiki), KorQuAD 1.0, KorQuAD 2.1
-구현 기능: 문장 추출, 원본 데이터 추출(예정), 각 과제에 맞는 데이터셋 구축 
+- 적용가능 데이터: 한국어 위키 백과(kowiki), 나무 위키(namu wiki), KorQuAD 1.0, KorQuAD 2.1
+- 구현 기능: 문장 추출, 원본 데이터 추출(예정), 각 과제에 맞는 데이터셋 구축 
