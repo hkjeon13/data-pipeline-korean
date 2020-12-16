@@ -97,12 +97,13 @@ def preprocessing(content, mode='kowiki-sens-kor'):
                        '(?<=\[\[)[^\[]+\|(?=[^\|\]]+\]\])',
                        '[\[\]]{2,}', "={2,}", LINK, '\[\]',
                        '(?<=\n)\'+', '(?<=\n)/+', '(?<=\n) +', '\(, \)']
+
         for pattern in rm_patterns:
             content = re.sub(pattern, '', content)
 
         content = '\n'.join(list(filter(
             lambda x: len(x.split()) > 3 and re.compile('[가-힣]').match(x),
-            get_sentences(content))))
+            content)))
 
         rm_patterns = ['(?<=\n)[^가-힣]+(?=\n)', '(?<=\n)\[.+\](?=\n)', '(?<=[ 가-힣])[\[\]](?=[ 가-힣])']
         for pattern in rm_patterns:
@@ -132,15 +133,13 @@ def preprocessing(content, mode='kowiki-sens-kor'):
         sentences = []
         for c in content.split('\n'):
             if (len(c.split()) > 3 and re.compile('[가-힣]').match(c)) or (c == ''):
-                sentences+=get_sentences(c)
+                sentences+=c
         content = '\n'.join(sentences)
         content = re.sub('\n{2,}', '\n\n', content)
         content = re.sub('(?<=\n)파일:[^\n]+', '', content)
 
     elif mode == 'korquad1-sens-kor':
-        content = get_sentences(content)
-        content = '\n'.join(content)
-
+        return content
     elif mode =='korquad2-sens-kor':
         content = remove_with_inside(content, '<', '>', padding='')
 
@@ -153,7 +152,6 @@ def preprocessing(content, mode='kowiki-sens-kor'):
             if (len(c.split()) > 3 and re.compile('[가-힣]').match(c)) or (c==''):
                 sentences.append(c)
         content = '\n'.join(sentences)
-        content = '\n'.join(get_sentences(content))
         rm_patterns = ['(?<=[ 가-힣])[\[\]](?=\n)', '\[[0-9]+\](?=\n)']
         for pattern in rm_patterns:
             content = re.sub(pattern, '', content)
@@ -169,7 +167,6 @@ def remove_with_inside(content, former, later, padding=''):
     content = re.sub(pattern_a, padding, content)
     content = re.sub(pattern_b, padding, content)
     return content
-
 
 def get_sentences(content):
     return re.split('(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|!)\s', content)

@@ -23,6 +23,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO)
     num_cores = args.num_cores if args.num_cores else cpu_count()
+    if not os.path.isdir(args.output_dir):
+        os.mkdir(args.output_dir)
+        logging.info(f'directory is created in {args.output_dir}')
+
     logging.info(f'the number of cpu cores: {num_cores}')
     input_files = [os.path.join(args.input_dir, f) for f in os.listdir(args.input_dir)]
     output_files = [os.path.join(args.output_dir, args.prefix + '.'.join(os.path.basename(i).split('.')[:-1]))+'.txt' for i in input_files]
@@ -41,6 +45,6 @@ if __name__ == '__main__':
         else:
             raise KeyError('Not supported!')
 
-        sentences = '\n\n'.join(sentences)
+        sentences = '\n'.join(sentences)
         save_sentences(output_file, sentences)
         logging.info(f"Saved Successfully in {output_file}")
