@@ -101,16 +101,13 @@ def preprocessing(content, mode='kowiki-sens-kor'):
         for pattern in rm_patterns:
             content = re.sub(pattern, '', content)
 
-        content = '\n'.join(list(filter(
-            lambda x: len(x.split()) > 3 and re.compile('[가-힣]').match(x),
-            content)))
-
         rm_patterns = ['(?<=\n)[^가-힣]+(?=\n)', '(?<=\n)\[.+\](?=\n)', '(?<=[ 가-힣])[\[\]](?=[ 가-힣])']
         for pattern in rm_patterns:
             content = re.sub(pattern, '', content)
 
         content = re.sub('\n{2,}','\n\n', content)
-
+        content = [ c.strip() for c in content.split('\n') if len(c.split()) > 3 or c=='']
+        content = '\n'.join(content)
     elif mode == 'namuwiki-sens-kor':
         pairs =[['<', '>'],['{{', '}}'],['{', '}'],['~~', '~~']]
         for f,l in pairs:
@@ -130,16 +127,12 @@ def preprocessing(content, mode='kowiki-sens-kor'):
         for pattern in rm_patterns:
             content = re.sub(pattern, '', content)
 
-        sentences = []
-        for c in content.split('\n'):
-            if (len(c.split()) > 3 and re.compile('[가-힣]').match(c)) or (c == ''):
-                sentences+=c
-        content = '\n'.join(sentences)
         content = re.sub('\n{2,}', '\n\n', content)
         content = re.sub('(?<=\n)파일:[^\n]+', '', content)
 
     elif mode == 'korquad1-sens-kor':
         return content
+
     elif mode =='korquad2-sens-kor':
         content = remove_with_inside(content, '<', '>', padding='')
 

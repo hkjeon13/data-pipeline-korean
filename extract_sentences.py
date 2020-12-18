@@ -33,11 +33,12 @@ if __name__ == '__main__':
 
     for input_file, output_file in zip(input_files, output_files):
         logging.info(f'** Input file:{input_file}')
+
         if args.data_type == 'korquad1-sens-kor':
             sentences = korquad1_sentences(path=input_file, num_cores=num_cores, mode=args.data_type)
         elif args.data_type == 'korquad2-sens-kor':
             sentences = korquad2_sentences(path=input_file, num_cores=num_cores, mode=args.data_type)
-        elif args.data_type =='namuwiki-sens-kor':
+        elif args.data_type == 'namuwiki-sens-kor':
             sentences = namuwiki_sentences(path=input_file, num_cores=num_cores, mode=args.data_type)
         elif args.data_type == 'kowiki-sens-kor':
             logging.info(f'** The multiprocessing is not supported.')
